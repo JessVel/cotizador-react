@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import PropTypes from 'prop-types';
 import { ObtenerDiferenciaYear, calcularMarca, obtenerPlan } from './helper';
 
 const Campo = styled.div`
@@ -21,7 +22,7 @@ const Select = styled.select`
 `;
 
 const InputRadio = styled.input`
-    margin: 0 1rem;  
+    margin: 0 1rem;
 `;
 
 const Boton = styled.button`
@@ -35,6 +36,7 @@ const Boton = styled.button`
     border: none;
     transition:background-color .3s ease;
     margin-top: 2rem;
+    border-radius:10px;
 
     &:hover{
         background-color: #26C6DA;
@@ -43,15 +45,17 @@ const Boton = styled.button`
 `;
 
 const Error = styled.div`
-    background-color: red;
-    color:white;
+    background-color:#ff9999;
+    color:#800000;
+    border: 1px solid #FA3F36;
     padding: 1rem;
     margin-bottom: 2rem;
     width: 100%;
     text-align: center;
+    border-radius:10px;
 `;
 
-const Formulario = () =>{
+const Formulario = ( {handleSetResumen, handleSetLoading} ) =>{
 
     const [ datos, setDatos ] = useState({
         marca:'',
@@ -89,30 +93,44 @@ const Formulario = () =>{
 
         //obtener la diferencias de años 
         const diferencia = ObtenerDiferenciaYear(year);
-        console.log(diferencia);
 
         //por cada año hay que restar el 3%
         resultado -= (( diferencia * 3) * resultado) / 100;
-        console.log(resultado);
 
         //americano 15%
         //asiatico 5%
         //europeo 30%
         resultado = calcularMarca(marca) * resultado;
-        console.log(resultado);
 
         //basico aumenta 20%
         //completo 50%
         const incrementoPlan = obtenerPlan(plan);
-        console.log(incrementoPlan);
+        resultado = parseFloat( incrementoPlan * resultado ).toFixed(1);
+        
+        handleSetLoading(true);
 
         //total
+        setTimeout( () =>{
+
+            //eliminar spinner
+            handleSetLoading(false);
+
+            //pasa la informacion al componente principal
+            handleSetResumen({
+                cotizacion: Number(resultado),
+                datos
+            });
+        }, 1000)
+
+        
+      
+        
     }
 
     return(
         <form onSubmit={handleSubmit} 
         >
-            { error ? <Error>Todos los campos son obligatiorios</Error> : null}
+            { error ? <Error>Todos los campos son obligatiorios.</Error> : null}
             <Campo>
                 <Label>Marca</Label>
                 <Select name="marca"
@@ -167,6 +185,11 @@ const Formulario = () =>{
         </form>
 
     );
+}
+
+Formulario.propTypes = {
+    handleSetResumen: PropTypes.func.isRequired,
+    handleSetLoading: PropTypes.func.isRequired
 }
 
 export default Formulario;

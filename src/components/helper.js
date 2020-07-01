@@ -1,6 +1,6 @@
 //diferencia de años
 export function ObtenerDiferenciaYear(year) {
-    return new Date(). getFullYear() - year;
+    return new Date().getFullYear() - year;
  }
 
  //calcula el total a pagar segun la marca
@@ -26,4 +26,9 @@ export function ObtenerDiferenciaYear(year) {
  // calcula el tipo de seguro
  export function obtenerPlan (plan){
      return(plan === "basico") ? 1.20 : 1.50;
+ }
+
+ //muestra la primera letra mayuscula
+ export function primerMayuscula(texto){
+     return texto.charAt(0).toUpperCase() + texto.slice(1);
  }
